@@ -1,7 +1,6 @@
-version: '3.7'
+version: "3.7"
 
 services:
-
   # The 'setup' service runs a one-off script which initializes users inside
   # Elasticsearch — such as 'logstash_internal' and 'kibana_system' — with the
   # values of the passwords defined in the '.env' file. It also creates the
@@ -66,6 +65,11 @@ services:
     networks:
       - elk
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ecs.rule=Host(ecs.flowrms.com)
+      - traefik.http.routers.ecs.tls=true
+      - traefik.http.routers.ecs.tls.certresolver=letsencrypt
 
   logstash:
     build:
@@ -88,6 +92,11 @@ services:
     depends_on:
       - elasticsearch
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.logstash.rule=Host(logstash.flowrms.com)
+      - traefik.http.routers.logstash.tls=true
+      - traefik.http.routers.logstash.tls.certresolver=letsencrypt
 
   kibana:
     build:
@@ -105,6 +114,27 @@ services:
     depends_on:
       - elasticsearch
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.kibana.rule=Host(kibana.flowrms.com)
+      - traefik.http.routers.kibana.tls=true
+      - traefik.http.routers.kibana.tls.certresolver=letsencrypt
+
+  traefik:
+    image: traefik:v2.3
+    container_name: traefik
+    command:
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    networks:
+      - elk
+    volumes:
+      - traefik-letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - $PWD/services/traefik/traefik.toml:/etc/traefik/traefik.toml
 
 networks:
   elk:
