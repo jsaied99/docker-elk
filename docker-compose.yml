@@ -67,7 +67,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ecs.rule=Host(ecs.flowrms.com)
+      - traefik.http.routers.ecs.rule=Host(`ecs.flowrms.com`)
       - traefik.http.routers.ecs.tls=true
       - traefik.http.routers.ecs.tls.certresolver=letsencrypt
 
@@ -94,7 +94,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.logstash.rule=Host(logstash.flowrms.com)
+      - traefik.http.routers.logstash.rule=Host(`logstash.flowrms.com`)
       - traefik.http.routers.logstash.tls=true
       - traefik.http.routers.logstash.tls.certresolver=letsencrypt
 
@@ -116,7 +116,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.kibana.rule=Host(kibana.flowrms.com)
+      - traefik.http.routers.kibana.rule=Host(`kibana.flowrms.com`)
       - traefik.http.routers.kibana.tls=true
       - traefik.http.routers.kibana.tls.certresolver=letsencrypt
 
